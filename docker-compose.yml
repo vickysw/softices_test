@@ -1,0 +1,41 @@
+version: '2'
+services:
+  website:
+    container_name: php74-lara
+    image: laravel:crm
+    build:
+      context: ./
+      dockerfile: .docker/Dockerfile
+    volumes:
+      - D:/dc@vsw/lara-crm/crm/:/var/www/html/
+    ports:
+      - 5000:80
+    depends_on:
+      - mysql     
+  mysql:
+        image: mysql
+        container_name: mysql-server-lara1-80
+        command: --default-authentication-plugin=mysql_native_password
+#        working_dir: /application
+        volumes:
+          -  D:\dc@vsw\docker-exp\mysql-data\backup.sql:/docker-entrypoint-initdb.d/backup.sql
+        # restart: always
+        environment:
+          - MYSQL_ROOT_PASSWORD=root
+          - MYSQL_DATABASE=silicpba_nani_db
+          - MYSQL_USER=root
+          - MYSQL_PASSWORD=root
+        ports:
+          - "5001:3306"
+  phpadmin:
+      depends_on:
+       - mysql
+      image: phpmyadmin/phpmyadmin
+      container_name: phpmyadmin-lara
+      # restart: always
+      ports:
+       - '5002:80'
+      environment:
+        PMA_HOST: mysql
+        PMA_USER: root
+        PMA_PASSWORD: root
